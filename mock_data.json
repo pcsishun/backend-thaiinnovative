@@ -1,0 +1,37 @@
+[
+    {
+        "firstname": "Tester",
+        "lastname": "Ltester",
+        "email": "emailTest",
+        "password": "asasdkgjdngk",
+        "photo": "testPhoto"
+    },
+    {
+        "firstname": "Tester2",
+        "lastname": "Ltester2",
+        "email": "emailTest",
+        "password": "asasdkgjdngk",
+        "photo": "testPhoto"     
+    },
+    {
+        "firstname": "Tester3",
+        "lastname": "Ltester3",
+        "email": "emailTest",
+        "password": "asasdkgjdngk",
+        "photo": "testPhoto"
+    },
+    {
+        "firstname": "Tester4",
+        "lastname": "Ltester4",
+        "email": "emailTest",
+        "password": "asasdkgjdngk",
+        "photo": "testPhoto"
+    },
+    {
+        "firstname": "Tester5",
+        "lastname": "Ltester5",
+        "email": "emailTest",
+        "password": "asasdkgjdngk",
+        "photo": "testPhoto"
+    }
+]
