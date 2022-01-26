@@ -10,8 +10,9 @@ const app = express();
 const port = 3300;
 
 // รอบการเข้ารหัสเเก้ตรงนี้ // 
-
 const enryptRound = 10;
+
+
 app.use(cors()); 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json())
