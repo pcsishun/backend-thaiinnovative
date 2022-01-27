@@ -44,11 +44,13 @@ app.post('/userprofile', async(req, res) => {
             if(resultLogin === true && userLogin !== undefined){
                 console.log(userLogin)
                 console.log('status login', resultLogin)
-                res.send(userLogin)
+                res.send({data:userLogin, status: true})
+            }else{
+                res.send({status: false})
             }
         }catch(err){
             console.log(err)
-            res.send("Invalid email or password")
+            res.send({status: false})
         }
 
       });
