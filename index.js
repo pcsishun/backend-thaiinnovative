@@ -40,33 +40,45 @@ app.post('/userprofile', async(req, res) => {
         try{
             // เรียกใช้ collection user_register // 
             const userLogin = await dbo.collection("user_register").findOne({email: userEmail});
-            const resultLogin =  await bcrypt.compare(password, userLogin.password);
+            const arrayLogin = [userLogin]
+            
             // console.log(userLogin[0].length)
             // const rangeData = userLogin.length()
-            if(resultLogin === true && userLogin !== undefined){
-                const setSendingData = {
-                    statusLogin: resultLogin,
-                    statusDesc: "login success",
-                    firstname: userLogin.firstname,
-                    lastname: userLogin.lastname,
-                    email: userLogin.email,
-                    photo: userLogin.photo
+            if(arrayLogin[0] !== null){
+                const resultLogin =  await bcrypt.compare(password, userLogin.password);
+
+                if(resultLogin === true){
+                    const setSendingData = {
+                        statusLogin: true,
+                        statusDesc: "login success",
+                        firstname: userLogin.firstname,
+                        lastname: userLogin.lastname,
+                        email: userLogin.email,
+                        photo: userLogin.photo
+                    }
+                    // // console.log(setSendingData)
+                    // console.log('status login', setSendingData)
+                    res.send(setSendingData)
                 }
-                // console.log(setSendingData)
-                console.log('status login', setSendingData)
-                res.send(setSendingData)
+                else{
+                    const setSendingData = {
+                        statusLogin: false,
+                        statusDesc: "Invalid email or password",
+                    } 
+                    res.send(setSendingData)             
+                }
+
             }else{
                 const setSendingData = {
-                    statusLogin: resultLogin,
-                    statusDesc: "Invalid Email or password",
+                    statusLogin: false,
+                    statusDesc: "Invalid email or password",
                 } 
                 res.send(setSendingData)
             }
         }catch(err){
-            console.log(err)
             const setSendingData = {
-                statusLogin: resultLogin,
-                statusDesc: "Invalid Email or password",
+                statusLogin:  false,
+                statusDesc: "Invalid email or password",
             } 
             res.send(setSendingData)
         }
