@@ -29,6 +29,8 @@ app.post('/userprofile', async(req, res) => {
     const userEmail = req.body.email; 
     const password = req.body.password;
 
+    console.log(userEmail, password);
+
     MongoClient.connect(setUrl, async function(err, db) {
         if (err) throw err;
 
@@ -42,15 +44,31 @@ app.post('/userprofile', async(req, res) => {
             // console.log(userLogin[0].length)
             // const rangeData = userLogin.length()
             if(resultLogin === true && userLogin !== undefined){
-                console.log(userLogin)
-                console.log('status login', resultLogin)
-                res.send({data:userLogin, status: true})
+                const setSendingData = {
+                    statusLogin: resultLogin,
+                    statusDesc: "login success",
+                    firstname: userLogin.firstname,
+                    lastname: userLogin.lastname,
+                    email: userLogin.email,
+                    photo: userLogin.photo
+                }
+                console.log(setSendingData)
+                console.log('status login', setSendingData)
+                res.send(setSendingData)
             }else{
-                res.send({status: false})
+                const setSendingData = {
+                    statusLogin: resultLogin,
+                    statusDesc: "Invalid Email or password",
+                } 
+                res.send(setSendingData)
             }
         }catch(err){
             console.log(err)
-            res.send({status: false})
+            const setSendingData = {
+                statusLogin: resultLogin,
+                statusDesc: "Invalid Email or password",
+            } 
+            res.send(setSendingData)
         }
 
       });
@@ -58,7 +76,7 @@ app.post('/userprofile', async(req, res) => {
 
 app.post('/register',  async(req, res) => {
 
-    const firstName = req.body.firstname
+    const firstName = req.body.firstName
     const lastName = req.body.lastName
     const email = req.body.email
     const password = req.body.password
