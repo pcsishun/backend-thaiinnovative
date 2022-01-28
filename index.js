@@ -29,7 +29,7 @@ app.post('/userprofile', async(req, res) => {
     const userEmail = req.body.email; 
     const password = req.body.password;
 
-    console.log(userEmail, password);
+    // console.log(userEmail, password);
 
     MongoClient.connect(setUrl, async function(err, db) {
         if (err) throw err;
