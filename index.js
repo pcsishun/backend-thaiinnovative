@@ -102,8 +102,9 @@ app.post('/register',  async(req, res) => {
         const dbo = db.db("thai_agro_innovative");
 
         const checkEmail = await dbo.collection("user_register").findOne({email: email});
-        console.log(checkEmail);
-        if(checkEmail.email === email){
+        const arrayEmail = [checkEmail]
+        // console.log(arrayEmail);
+        if(arrayEmail[0] !== null){
             const setDuplicate = {
                 registerStatus: false,
                 text: "this email alreadly register."
