@@ -78,7 +78,7 @@ app.post('/userprofile', async(req, res) => {
 
 app.post('/register',  async(req, res) => {
 
-    console.log(req.body);
+    // console.log(req.body);
 
     const firstName = req.body.firstName
     const lastName = req.body.lastName
@@ -105,6 +105,7 @@ app.post('/register',  async(req, res) => {
         console.log(checkEmail);
         if(checkEmail.email === email){
             const setDuplicate = {
+                registerStatus: false,
                 text: "this email alreadly register."
             }
             res.send(setDuplicate)
@@ -123,6 +124,7 @@ app.post('/register',  async(req, res) => {
                 // console.log(result);
 
                 const replyText = {
+                    registerStatus: true,
                     text: "register sucess"
                 }
                 res.send(replyText);
