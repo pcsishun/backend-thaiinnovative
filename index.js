@@ -52,7 +52,7 @@ app.post('/userprofile', async(req, res) => {
                     email: userLogin.email,
                     photo: userLogin.photo
                 }
-                console.log(setSendingData)
+                // console.log(setSendingData)
                 console.log('status login', setSendingData)
                 res.send(setSendingData)
             }else{
@@ -72,9 +72,13 @@ app.post('/userprofile', async(req, res) => {
         }
 
       });
+      
+    // res.sendStatus(200)
 })
 
 app.post('/register',  async(req, res) => {
+
+    console.log(req.body);
 
     const firstName = req.body.firstName
     const lastName = req.body.lastName
@@ -91,31 +95,40 @@ app.post('/register',  async(req, res) => {
     // console.log(email)
     // console.log(photo)
 
-    MongoClient.connect(setUrl, function(err, db){
+    MongoClient.connect(setUrl, async function(err, db){
         if(err) throw err;
 
         // เลือก database // 
         const dbo = db.db("thai_agro_innovative");
 
-        const dataObj = {
-            firstname: firstName, 
-            lastname: lastName,
-            email: email,
-            password: hashPassword,
-            photo: photo
-        };
+        const checkEmail = await dbo.collection("user_register").findOne({email: email});
+        console.log(checkEmail);
+        if(checkEmail.email === email){
+            const setDuplicate = {
+                text: "this email alreadly register."
+            }
+            res.send(setDuplicate)
+        }else{
+            const dataObj = {
+                firstname: firstName, 
+                lastname: lastName,
+                email: email,
+                password: hashPassword,
+                photo: photo
+            };
+            // เก็บไว้ใน collection user_register // 
+            dbo.collection("user_register").insertOne(dataObj, function(err, result){
+                if(err) throw err;
+                db.close();
+                // console.log(result);
 
-        // เก็บไว้ใน collection user_register // 
-        dbo.collection("user_register").insertOne(dataObj, function(err, result){
-            if(err) throw err;
-            db.close();
-            // console.log(result);
-            res.send("insert sucess!");
-        })
+                const replyText = {
+                    text: "register sucess"
+                }
+                res.send(replyText);
+            })
+        }
     })
- 
-
-    
 })
 
 
