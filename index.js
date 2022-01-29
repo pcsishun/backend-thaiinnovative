@@ -97,6 +97,7 @@ app.post('/register',  async(req, res) => {
     const email = req.body.email
     const password = req.body.password
     const photo = req.body.photo
+    const containerCode = req.body.containerCode
  
 
     const hashPassword = bcrypt.hashSync(password, enryptRound);
@@ -128,7 +129,8 @@ app.post('/register',  async(req, res) => {
                 lastname: lastName,
                 email: email,
                 password: hashPassword,
-                photo: photo
+                photo: photo,
+                containerCode: containerCode 
             };
             // เก็บไว้ใน collection user_register // 
             dbo.collection("user_register").insertOne(dataObj, function(err, result){
