@@ -150,8 +150,8 @@ app.post('/register',  async(req, res) => {
 
 
 app.put('/updateprofile', async(req, res) => {
-
-    const firstName = req.body.firstname
+    console.log(req.body)
+    const firstName = req.body.firstName
     const lastName = req.body.lastName
     const email = req.body.email
     const password = req.body.password
