@@ -4,15 +4,14 @@ const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient; 
 const bcrypt = require('bcrypt');
 
-
 const app = express();
-// port server เเก้ตรงนี้ // 
+// port server แก้ตรงนี้ // 
 const port = 3300;
 
-// รอบการเข้ารหัสเเก้ตรงนี้ // 
+// รอบการเข้ารหัสแก้ตรงนี้ // 
 const enryptRound = 10;
 
-
+// -- config backend -- //
 app.use(cors()); 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json())
@@ -23,9 +22,10 @@ app.use(bodyParser.json())
 // mongodb+srv://doadmin:1q59y38760NOzPVv@db-mongodb-nyc1-13024-bc11591e.mongo.ondigitalocean.com/admin?authSource=admin&replicaSet=db-mongodb-nyc1-13024&tls=true&tlsCAFile=<replace-with-path-to-CA-cert> //
 const setUrl = 'mongodb://localhost:27017/';
 
-// ---- //
-
+// -- api user login -- //
 app.post('/userprofile', async(req, res) => {
+
+    //  ข้อมูลที่หน้าบ้านส่งเข้ามา  //
     const userEmail = req.body.email; 
     const password = req.body.password;
 
@@ -42,12 +42,14 @@ app.post('/userprofile', async(req, res) => {
             const userLogin = await dbo.collection("user_register").findOne({email: userEmail});
             const arrayLogin = [userLogin]
             
-            // console.log(userLogin[0].length)
             // const rangeData = userLogin.length()
             if(arrayLogin[0] !== null){
+
+                // ตรวจสอบว่า รหัสทัี่ส่งเข้ามาเหมือนกัน  //
                 const resultLogin =  await bcrypt.compare(password, userLogin.password);
 
                 if(resultLogin === true){
+                    // ส่งข้อมูลกลับไปหลังจาก เช็ตว่ารหัสนั้นตรงกัน // 
                     const setSendingData = {
                         statusLogin: true,
                         statusDesc: "login success",
@@ -56,11 +58,11 @@ app.post('/userprofile', async(req, res) => {
                         email: userLogin.email,
                         photo: userLogin.photo
                     }
-                    // // console.log(setSendingData)
-                    // console.log('status login', setSendingData)
                     res.send(setSendingData)
                 }
                 else{
+
+                    // ส่งข้อมูลกลับหากตัวแปร resultLogin มีค่าเป็น false // 
                     const setSendingData = {
                         statusLogin: false,
                         statusDesc: "Invalid email or password",
@@ -69,6 +71,7 @@ app.post('/userprofile', async(req, res) => {
                 }
 
             }else{
+                // ส่งข้อมูลกลับหากตัวแปร arrayLogin ไม่พบ  email ที่รับมา // 
                 const setSendingData = {
                     statusLogin: false,
                     statusDesc: "Invalid email or password",
@@ -76,6 +79,7 @@ app.post('/userprofile', async(req, res) => {
                 res.send(setSendingData)
             }
         }catch(err){
+            // ส่งข้อมูลกลับหากเกิด error ขึ้น // 
             const setSendingData = {
                 statusLogin:  false,
                 statusDesc: "Invalid email or password",
@@ -88,10 +92,10 @@ app.post('/userprofile', async(req, res) => {
     // res.sendStatus(200)
 })
 
+// -- api สำหรับ user สมัครเข้าใช้งาน -- //
 app.post('/register',  async(req, res) => {
-
-    // console.log(req.body);
-
+ 
+    //  ข้อมูลที่หน้าบ้านส่งเข้ามา  //
     const firstName = req.body.firstName
     const lastName = req.body.lastName
     const email = req.body.email
@@ -99,14 +103,7 @@ app.post('/register',  async(req, res) => {
     const photo = req.body.photo
     const containerCode = req.body.containerCode
  
-
     const hashPassword = bcrypt.hashSync(password, enryptRound);
-
-    // console.log(hashPassword)
-    // console.log(firstName)
-    // console.log(lastName)
-    // console.log(email)
-    // console.log(photo)
 
     MongoClient.connect(setUrl, async function(err, db){
         if(err) throw err;
@@ -116,7 +113,7 @@ app.post('/register',  async(req, res) => {
 
         const checkEmail = await dbo.collection("user_register").findOne({email: email});
         const arrayEmail = [checkEmail]
-        // console.log(arrayEmail);
+
         if(arrayEmail[0] !== null){
             const setDuplicate = {
                 registerStatus: false,
@@ -124,6 +121,8 @@ app.post('/register',  async(req, res) => {
             }
             res.send(setDuplicate)
         }else{
+
+            // ตัวแปล ที่จะทำการเก็บข้อมูลบันทึกลงใน Mongodb // 
             const dataObj = {
                 firstname: firstName, 
                 lastname: lastName,
@@ -136,7 +135,6 @@ app.post('/register',  async(req, res) => {
             dbo.collection("user_register").insertOne(dataObj, function(err, result){
                 if(err) throw err;
                 db.close();
-                // console.log(result);
 
                 const replyText = {
                     registerStatus: true,
@@ -148,21 +146,22 @@ app.post('/register',  async(req, res) => {
     })
 })
 
-
+// -- api สำหรับ user จัดการหน้า profile ตัวเอง เช่นการ update -- //
 app.put('/updateprofile', async(req, res) => {
-    console.log(req.body)
+
+     // ตัวแปล ที่รับมาจากหน้าบ้าน // 
     const firstName = req.body.firstName
     const lastName = req.body.lastName
     const email = req.body.email
     const password = req.body.password
     const photo = req.body.photo
 
+    // เข้ารหัส password // 
     const hashPassword = bcrypt.hashSync(password, enryptRound);
 
     MongoClient.connect(setUrl, function(err, db) {
         if (err) throw err;
-        // เลือก database // 
-
+        // เลือก database //
         const dbo = db.db("thai_agro_innovative");
         // หา email // 
         const myquery = { email: email };
